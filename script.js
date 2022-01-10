@@ -7,8 +7,8 @@ const deleteBtn = document.querySelector('.delete');
 const equalBtn = document.querySelector('.equalKey');
 const prevOperand = document.querySelector('.previous_operand');
 const currOperand = document.querySelector('.current_operand');
-prevOperand.textContent = ' ';
-currOperand.textContent = ' ';
+prevOperand.textContent = '';
+currOperand.textContent = '';
 // Operators Functions
 function add(num1, num2) {
     return num1 + num2;
@@ -42,6 +42,17 @@ let result = '';
 currOperand.textContent = 0;
 
 numberBtn.forEach((number) => {
+    number.addEventListener('keypress', function (e) {
+        storedNumber += e.key;
+        currOperand.textContent = storedNumber;
+        if (storedNumber.includes('..')) {
+            alert('Wrong Number Syntax');
+            currOperand.textContent = 0;
+        }
+    })
+});
+
+numberBtn.forEach((number) => {
     number.addEventListener('click', function () {
         storedNumber += number.value;
         currOperand.textContent = storedNumber;
@@ -51,6 +62,7 @@ numberBtn.forEach((number) => {
         }
     })
 });
+
 operatorBtn.forEach((operator => {
     operator.addEventListener('click', function () {
 
@@ -64,12 +76,20 @@ operatorBtn.forEach((operator => {
     })
 }));
 equalBtn.addEventListener('click', function () {
-    // when equals key is clicked call operate() function
-    result = operate(parseFloat(firstNumber), parseFloat(storedNumber), clickedOperator)
+    if(prevOperand.textContent == ''){
+        alert('No Values to Operate !');
+    } else {
+        // when equals key is clicked call operate() function
+    result = operate(parseFloat(firstNumber), parseFloat(storedNumber), clickedOperator);
     // update content of current operation with result and previous operand with the calculation, make storedNumber = result
-    currOperand.textContent = parseFloat(result).toFixed(2);
+    if(result.toString().includes('.')){
+        currOperand.textContent = parseFloat(result).toFixed(2);
+    } else {
+        currOperand.textContent = result;
+    }
     prevOperand.textContent = firstNumber + ' ' + clickedOperator + ' ' + storedNumber;
     storedNumber = result;
+    }
 });
 clearBtn.addEventListener('click', function () {
     prevOperand.textContent = '';
@@ -87,6 +107,4 @@ deleteBtn.addEventListener('click', function () {
         storedNumber = storedNumber.substring(0, storedNumber.length - 1);
         currOperand.textContent = storedNumber;
     }
-
-
 });
